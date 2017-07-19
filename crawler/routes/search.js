@@ -19,7 +19,10 @@ router.post('/', function(req, res, next) {
             return data.text()
         }).then((data) => {
             $ = cheerio.load(data)
+            var href = $('.t_box a').attr('href');
+            href = href.replace('http://www.dyaigou.com/', '') // player_container
             res.send($('.t_box').html())
+            // www.dyaigou.com/vipdy/online/201701/15323.html
         })
 });
 
