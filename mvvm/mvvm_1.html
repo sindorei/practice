@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h1 v-text="text"></h1>
+        <input type="text" v-model="text">
+    </div>
+    <script>
+        class Vue {
+            constructor(option) {
+                this.option = option
+                this.$data = option.data
+                this.$el = document.querySelector(option.el)
+                this._directives = {}
+                this.observe(this.$data)
+                this.compile(this.$el)
+            }
+            observe(data) {
+                for (let key in data) {
+                    this._directives[key] = []
+                    let val = data[key]
+                    let watchers = this._directives[key]
+                    Object.defineProperty(this.$data, key, {
+                        get() {
+                            return val
+                        },
+                        set(newVal) {
+                            if (newVal !== val) {
+                               val = newVal
+                                watchers.forEach(watcher => {
+                                    watcher.update()
+                                })
+                            }
+                        }
+                    })
+
+                }
+            }
+
+            compile(el) {
+                const nodes = el.children
+                for (let node of nodes) {
+                    if (node.children) {
+                        this.compile(node)
+                    }
+                    if (node.hasAttribute('v-text')) {
+                        let attrValue = node.getAttribute('v-text')
+                        this._directives[attrValue].push(new Watcher(node, this, attrValue, 'innerHTML'))
+                    }
+                    if (node.hasAttribute('v-model')) {
+                        let attrValue = node.getAttribute('v-model')
+                        this._directives[attrValue].push(new Watcher(node, this, attrValue, 'value'))
+                        node.addEventListener('input', () => {
+                            this.$data[attrValue] = node.value
+                        })
+                    }
+                }
+
+            }
+        }
+
+        class Watcher {
+            constructor(el, vm, exp, attr) {
+                this.el = el
+                this.vm = vm
+                this.exp = exp
+                this.attr = attr
+                this.update()
+            }
+            update() {
+                this.el[this.attr] = this.vm.$data[this.exp]
+            }
+
+        }
+
+        new Vue({
+            el: '#app',
+            data: {
+                text: 'Hello World'
+            }
+        })
+    </script>
+</body>
+</html>
