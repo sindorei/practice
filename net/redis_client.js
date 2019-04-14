@@ -1,5 +1,5 @@
 /**
- * https://redis.io/topics/protocol
+ * RESP: https://redis.io/topics/protocol
  */
 
 const net = require('net')
