@@ -1,0 +1,1 @@
+module.exports = 'this is test_2.js'
