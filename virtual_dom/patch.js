@@ -16,6 +16,7 @@ function doPatch(node, patches) {
     patches.forEach(patch => {
         switch (patch.type) {
             case 'ATTRS':
+                // TODO 设置属性
                 break
             case 'REPLACE':
                 let newNode = (patch.newNode instanceof VNode) ?
@@ -24,8 +25,8 @@ function doPatch(node, patches) {
                 node.parentNode.replaceChild(newNode, node)
                 break
             case 'REMOVE':
+                node.parentNode.removeChild(node)
                 break
-
             case 'TEXT':
                 node.textContent = patch.text
                 break
